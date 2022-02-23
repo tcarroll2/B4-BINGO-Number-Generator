@@ -13,8 +13,6 @@
 
 import SwiftUI
 private var numbers: [Int] = []
-private var temp: [Int] = []
-private var index: Int = 0
 struct ContentView: View {
     @State var number: Int = 4 // "before and after"
     @State var newGame: Bool = false
@@ -22,23 +20,14 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 2.0) {
             Spacer()
-            Button(numbers.count == 0 ? "Confirm New Game" : newGame ? "Confirm New Game" : "Next Number") {
-                if numbers.count == 0 { newGame = true }
+            Button(numbers.isEmpty ? "Confirm New Game" : newGame ? "Confirm New Game" : "Next Number") {
+                if numbers.isEmpty { newGame = true }
                 if newGame {
-                    temp.removeAll(keepingCapacity: true)
-                    numbers.removeAll(keepingCapacity: true)
-                    for i in 1...75 {
-                        temp.append(i)
-                    }
-                    while temp.count > 0 {
-                        index = Int.random(in: 0...(temp.count - 1))
-                        numbers.append(temp[index])
-                        temp.remove(at: index)
-                    }
+                    numbers = Array(stride(from: 1, to: 76, by: 1)).shuffled()
                     number = numbers.popLast()!
                     newGame = false
                 }else{ // next number
-                    if numbers.count > 0 {
+                    if !numbers.isEmpty {
                         number = numbers.popLast() ?? 1
                     }
                     debounce = true
@@ -57,7 +46,7 @@ struct ContentView: View {
             }
             .onTapGesture {
                 if !newGame {
-                    if numbers.count > 0 {
+                    if !numbers.isEmpty {
                         number = numbers.popLast() ?? 1
                     }
                     debounce = true
@@ -68,7 +57,7 @@ struct ContentView: View {
             }
             .disabled(debounce)
             Spacer()
-            if numbers.count != 0 {
+            if !numbers.isEmpty {
                 Button(newGame ? "Cancel" : "New Game") {
                     newGame.toggle()
                 }
